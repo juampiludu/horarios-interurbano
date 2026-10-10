@@ -1,0 +1,13 @@
+id: cba-mendiolaza-direct
+company: beta
+name: Córdoba – Mendiolaza directo
+validFrom: "2026-01-01"
+source: test
+directions:
+  - id: outbound
+    stops: [cba-terminal, va-centro, mendiolaza-centro]
+    untimedStopsServed: true
+    schedules:
+      - days: [saturday]
+        trips:
+          - ["09:00", null, null]

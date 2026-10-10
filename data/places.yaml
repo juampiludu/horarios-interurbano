@@ -1,0 +1,22 @@
+# Places are what the user picks in the UI (A → B). Stops are the actual boarding points
+# that companies name in their timetables; several stops can belong to one place.
+places:
+  - { id: cordoba, name: Córdoba }
+  - { id: cordoba-arguello, name: Córdoba (CPC Argüello) }
+  - { id: saldan, name: Saldán }
+  - { id: villa-allende, name: Villa Allende, aliases: [V. Allende] }
+  - { id: mendiolaza, name: Mendiolaza }
+  - { id: el-talar, name: El Talar (Mendiolaza), aliases: [El Talar, Talar de Mendiolaza] }
+  - { id: unquillo, name: Unquillo }
+  - { id: rio-ceballos, name: Río Ceballos, aliases: [R. Ceballos] }
+
+# Add stops while transcribing timetables; reuse an existing stop when companies name the same point differently
+# (put the other spelling in aliases).
+stops:
+  - { id: cba, name: Córdoba, place: cordoba }
+  - { id: cba-cpc-arguello, name: CPC Argüello, place: cordoba-arguello }
+  - { id: villa-allende, name: Villa Allende, place: villa-allende }
+  - { id: mendiolaza, name: Mendiolaza, place: mendiolaza }
+  - { id: el-talar, name: El Talar, place: el-talar }
+  - { id: unquillo, name: Unquillo, place: unquillo }
+  - { id: unquillo-horno, name: Unquillo Horno, place: unquillo }

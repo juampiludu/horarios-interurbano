@@ -1,0 +1,27 @@
+{
+  "bcvBet": {
+    "label": "Córdoba – Unquillo",
+    "images": [
+      {
+        "url": "https://qrcgcustomers.s3-eu-west-1.amazonaws.com/account18046111/54243464_1.jpg",
+        "name": "Cordoba Unquillo Mayo 2025-01.jpg",
+        "sha256": "9742228a937861ef352cc8e65df7bfb8c3e99a7a5b7cdb9f88d33fea67d7a5f8"
+      },
+      {
+        "url": "https://qrcgcustomers.s3-eu-west-1.amazonaws.com/account18046111/55680553_1.jpg",
+        "name": "CBA - Unquillo.jpg",
+        "sha256": "b4d211c2589ab9a5357ac563c3b47c94dbac114b1e31a9fecf04fe9eb1e8ee9e"
+      }
+    ]
+  },
+  "bdAX2w": {
+    "label": "Urbano Villa Allende",
+    "images": [
+      {
+        "url": "https://qrcgcustomers.s3-eu-west-1.amazonaws.com/account18046111/50927470_1.jpg",
+        "name": "Imagen de WhatsApp 2025-01-10 a las 12.54.44_646550e6.jpg",
+        "sha256": "82c5246192b7a7942f25ca62c69f71dd13ef193140a01430eb2959c88ec7938e"
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+id: cba-unquillo
+company: beta
+name: Córdoba – Unquillo
+validFrom: "2026-01-01"
+source: test
+directions:
+  - id: outbound
+    stops: [cba-terminal, mendiolaza-centro]
+    schedules:
+      - days: [weekday]
+        trips:
+          - ["07:05", "07:50"]

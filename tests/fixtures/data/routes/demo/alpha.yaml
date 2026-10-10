@@ -1,0 +1,23 @@
+id: cba-mendiolaza
+company: alpha
+name: Córdoba – Mendiolaza
+validFrom: "2026-01-01"
+source: test
+directions:
+  - id: outbound
+    stops: [cba-terminal, cba-plaza-espana, va-centro, mendiolaza-centro]
+    schedules:
+      - days: [weekday]
+        trips:
+          - ["07:00", "07:10", "07:40", "07:55"]
+          - { times: [null, "06:30", "07:00", "07:15"], note: Sale de Plaza España }
+          - ["08:00", "08:10", "08:40", null]
+      - days: [saturday, sunday_holiday]
+        trips:
+          - ["09:00", "09:10", "09:40", "09:55"]
+  - id: inbound
+    stops: [mendiolaza-centro, va-centro, cba-plaza-espana, cba-terminal]
+    schedules:
+      - days: [weekday]
+        trips:
+          - ["06:00", "06:15", "06:45", "06:55"]

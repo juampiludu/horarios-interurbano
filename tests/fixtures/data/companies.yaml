@@ -1,0 +1,3 @@
+companies:
+  - { id: alpha, name: Alpha, color: "#000000" }
+  - { id: beta, name: Beta, color: "#ffffff" }

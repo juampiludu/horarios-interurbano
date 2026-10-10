@@ -1,0 +1,14 @@
+# Sources for scripts/watch-fares.ts.
+# News sitemaps list the latest articles with their titles; articles whose title matches titleMatch are read
+# and every "<place> ... $<price>" mention for a place in data/places.yaml becomes a fare candidate.
+# ERSeP (regulator) posts every increase of the per-km base rate; new ones become entries in fares.yaml → increases.
+ersep: "https://ersep.cba.gov.ar/wp-json/wp/v2/posts?search=interurbano&per_page=20&_fields=date,link,title,content"
+sitemaps:
+  - { name: El Doce, url: "https://eldoce.tv/arc/outboundfeeds/news-sitemap/?outputType=xml" }
+  - { name: Cba24n, url: "https://www.cba24n.com.ar/sitemap-news.xml" }
+  - { name: Perfil, url: "https://www.perfil.com/sitemap/google-news-lastposts" }
+  - { name: Cadena 3, url: "https://www.cadena3.com/feed/sitemap-news.xml" }
+# La Voz and Vía País block automated access (Cloudflare challenge), so they are only reported
+# by title through Google News, for manual review.
+googleNews: '"boleto interurbano" Córdoba'
+titleMatch: "interurban"

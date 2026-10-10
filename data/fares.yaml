@@ -1,0 +1,48 @@
+# Fares between places. The app starts from the latest observed price for a pair and applies every
+# ERSeP increase that came into force after it, rounding to `rounding` after each step (as companies do).
+# Checked: Villa Allende $3.160 (16/05/2025) projected to 30/09/2026 gives $3.950, the published price.
+#
+# Usually updated with: npx tsx scripts/watch-fares.ts --apply   (news prices + new ERSeP increases)
+rounding: 50
+
+# Province-wide increases of the per-km base rate (Tarifa Básica Kilométrica), series starting in 2025.
+increases:
+  - validFrom: "2025-02-14"
+    percent: 3.6
+    source: https://ersep.cba.gov.ar/r-g-n13-y-anexo-modificacion-tarifaria-transporte-interurbano-febrero-2025/
+  - validFrom: "2025-03-21"
+    percent: 3.5
+    source: https://ersep.cba.gov.ar/r-g-n13-y-anexo-modificacion-tarifaria-transporte-interurbano-febrero-2025/
+  - validFrom: "2025-05-16"
+    percent: 5.46
+    source: https://ersep.cba.gov.ar/tarifa-del-servicio-de-transporte-interurbano-mayo-2025/
+  - validFrom: "2026-01-02"
+    percent: 9.51
+    source: https://ersep.cba.gov.ar/rg-41-letra-d-modificacion-tarifaria-transporte-interurbano-enero-2026/
+  - validFrom: "2026-09-29"
+    percent: 14.68
+    source: https://ersep.cba.gov.ar/rg-132-letra-d-modificacion-tarifaria-transporte-interurbano-octubre-2026/
+
+# Observed prices. Without company the fare applies to every company.
+fares:
+  - between: [cordoba, mendiolaza]
+    price: 3300
+    validFrom: "2025-05-16"
+    source: https://www.cadena3.com/noticia/sociedad/aumento-un-546-el-transporte-interurbano-en-cordoba-como-quedaron-los-precios_422775
+  - between: [cordoba, villa-allende]
+    price: 3160
+    validFrom: "2025-05-16"
+    source: https://www.cadena3.com/noticia/sociedad/aumento-un-546-el-transporte-interurbano-en-cordoba-como-quedaron-los-precios_422775
+  - between: [cordoba, villa-allende]
+    price: 3950
+    validFrom: "2026-09-30"
+    source: https://hoydia.com.ar/hoy-cordoba/el-boleto-interurbano-aumento-casi-un-15-en-cordoba-cuanto-cuesta-viajar/
+  - between: [cordoba, rio-ceballos]
+    price: 5000
+    validFrom: "2026-09-30"
+    source: https://hoydia.com.ar/hoy-cordoba/el-boleto-interurbano-aumento-casi-un-15-en-cordoba-cuanto-cuesta-viajar/
+  - between: [cordoba, saldan]
+    price: 4000
+    validFrom: "2026-10-10"
+    # Sarmiento booking system (npx tsx scripts/fetch-sarmiento-departures.ts 1 53 <date>), CBA – SALDAN line.
+    source: http://horarios.gruposarmiento.com.ar/Horarios.aspx

@@ -1,0 +1,9 @@
+rounding: 50
+increases:
+  - { validFrom: "2026-05-01", percent: 10, source: test }
+  - { validFrom: "2026-10-01", percent: 14.68, source: test }
+fares:
+  - { company: alpha, between: [cordoba, mendiolaza], price: 1000, validFrom: "2026-01-01", source: test }
+  - { company: alpha, between: [mendiolaza, cordoba], price: 1100, validFrom: "2026-09-01", source: test }
+  - { between: [cordoba, villa-allende], price: 900, validFrom: "2026-01-01", source: test }
+  - { between: [cordoba, mendiolaza], price: 1200, validFrom: "2026-09-01", source: test }

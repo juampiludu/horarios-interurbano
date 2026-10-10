@@ -1,0 +1,31 @@
+id: cba-talar-unquillo
+company: sarmiento
+name: Córdoba – Talar – Unquillo
+validFrom: "2026-10-10"
+# Not in the timetable images: taken from the booking system with
+#   npx tsx scripts/fetch-sarmiento-departures.ts <from> <to> <date>   (1 = Córdoba, 49 = Mendiolaza, 50 = Unquillo)
+# The system has no El Talar stop; the time it reports for "Mendiolaza" on this line is used as the El Talar time
+# (it is 15' from Unquillo, vs 10' to Mendiolaza centro on the regular line). Other times are unknown.
+# No service on weekends and holidays.
+source: http://horarios.gruposarmiento.com.ar/Horarios.aspx
+directions:
+  - id: outbound
+    stops: [cba, el-talar, mendiolaza, unquillo]
+    untimedStopsServed: true
+    schedules:
+      - days: [weekday]
+        trips:
+          - { times: ["08:25", "09:25", null, null], note: Hora en El Talar aproximada }
+          - { times: ["11:10", "12:10", null, null], note: Hora en El Talar aproximada }
+          - { times: ["14:30", "15:30", null, null], note: Hora en El Talar aproximada }
+          - { times: ["17:30", "18:35", null, null], note: Hora en El Talar aproximada }
+  - id: inbound
+    stops: [unquillo, mendiolaza, el-talar, cba]
+    untimedStopsServed: true
+    schedules:
+      - days: [weekday]
+        trips:
+          - { times: ["06:50", null, "07:05", null], note: Hora en El Talar aproximada }
+          - { times: ["09:50", null, "10:05", null], note: Hora en El Talar aproximada }
+          - { times: ["12:50", null, "13:05", null], note: Hora en El Talar aproximada }
+          - { times: ["15:55", null, "16:10", null], note: Hora en El Talar aproximada }

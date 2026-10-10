@@ -1,0 +1,24 @@
+---
+import { loadDataset } from "../lib/load";
+import Search from "../components/Search";
+import "../styles/global.css";
+
+// DATA_DIR lets you preview the site with other data, e.g. DATA_DIR=tests/fixtures/data npm run dev
+const ds = loadDataset(process.env.DATA_DIR ?? "data");
+---
+
+<!doctype html>
+<html lang="es-AR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Horarios Sierras Chicas</title>
+  </head>
+  <body>
+    <main>
+      <h1>Horarios</h1>
+      <Search client:load data={ds} />
+    </main>
+  </body>
+</html>

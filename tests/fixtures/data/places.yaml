@@ -1,0 +1,9 @@
+places:
+  - { id: cordoba, name: Córdoba }
+  - { id: villa-allende, name: Villa Allende }
+  - { id: mendiolaza, name: Mendiolaza }
+stops:
+  - { id: cba-terminal, name: Terminal, place: cordoba }
+  - { id: cba-plaza-espana, name: Plaza España, place: cordoba }
+  - { id: va-centro, name: Villa Allende Centro, place: villa-allende }
+  - { id: mendiolaza-centro, name: Mendiolaza Centro, place: mendiolaza }

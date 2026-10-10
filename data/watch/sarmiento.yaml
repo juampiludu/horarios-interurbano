@@ -1,0 +1,7 @@
+# Sarmiento timetables watched by scripts/watch-sarmiento.ts.
+# Each entry is a qrco.de gallery linked from https://www.gruposarmiento.com.ar/horarios/
+lines:
+  - { code: bcvBet, label: Córdoba – Unquillo }
+  - { code: bdAX2w, label: Urbano Villa Allende }
+# New links whose label matches any of these words are reported so they can be added above.
+keywords: [unquillo, allende, mendiolaza, talar, saldan, ceballos]

@@ -1,0 +1,11 @@
+companies:
+  - id: intercordoba
+    name: Intercórdoba
+    color: "#1f5fbf"
+  - id: fonobus
+    name: FonoBus
+    color: "#c2410c"
+  - id: sarmiento
+    name: Sarmiento
+    color: "#15803d"
+    website: https://www.gruposarmiento.com.ar/horarios/
