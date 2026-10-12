@@ -6,9 +6,12 @@ places:
   - { id: saldan, name: Saldán }
   - { id: villa-allende, name: Villa Allende, aliases: [V. Allende] }
   - { id: mendiolaza, name: Mendiolaza }
-  - { id: el-talar, name: El Talar (Mendiolaza), aliases: [El Talar, Talar de Mendiolaza] }
+  # El Talar pays the same fare as Mendiolaza.
+  - { id: el-talar, name: El Talar (Mendiolaza), aliases: [El Talar, Talar de Mendiolaza], fareAs: mendiolaza }
   - { id: unquillo, name: Unquillo }
   - { id: rio-ceballos, name: Río Ceballos, aliases: [R. Ceballos] }
+  - { id: el-pueblito, name: El Pueblito (Salsipuedes), aliases: [El Pueblito] }
+  - { id: corzuelas, name: Las Corzuelas, aliases: [Corzuelas] }
 
 # Add stops while transcribing timetables; reuse an existing stop when companies name the same point differently
 # (put the other spelling in aliases).
@@ -20,3 +23,18 @@ stops:
   - { id: el-talar, name: El Talar, place: el-talar }
   - { id: unquillo, name: Unquillo, place: unquillo }
   - { id: unquillo-horno, name: Unquillo Horno, place: unquillo }
+  # Puente Talar is on the E-57 next to Muni. Mendiolaza; only some buses enter El Talar itself.
+  - { id: puente-talar, name: Puente Talar, place: mendiolaza }
+  - { id: cabana, name: Cabana, place: unquillo }
+  - { id: eco-unquillo, name: Eco Unquillo, place: unquillo }
+  - { id: frigorifico, name: Frigorífico, place: unquillo }
+  - { id: milenio, name: Milenio, place: unquillo }
+  - { id: rio-ceballos, name: Río Ceballos, place: rio-ceballos }
+  - { id: la-quebrada, name: La Quebrada, place: rio-ceballos }
+  - { id: el-pueblito, name: El Pueblito, place: el-pueblito }
+  - { id: corzuelas, name: Corzuelas, place: corzuelas }
+  - { id: va-golf, name: V.A. Golf, place: villa-allende }
+  - { id: barrio-golf, name: Barrio Golf, place: mendiolaza }
+  - { id: saldan, name: Saldán, place: saldan }
+  - { id: estacion-sol, name: Estación Sol, place: mendiolaza }
+  - { id: calle-3, name: Calle 3, place: mendiolaza }

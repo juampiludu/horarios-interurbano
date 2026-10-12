@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { parse } from "yaml";
 import { z } from "zod";
-import { companiesFile, faresFile, holidaysFile, placesFile, routeFile } from "./schema";
+import { UNKNOWN, companiesFile, faresFile, holidaysFile, placesFile, routeFile } from "./schema";
 import type { Dataset, Route } from "./dataset";
 
 z.config(z.locales.es());
@@ -13,7 +13,12 @@ export class DataError extends Error {
   }
 }
 
-function readYaml<T extends z.ZodType>(file: string, schema: T, problems: string[], root: string): z.infer<T> | undefined {
+function readYaml<T extends z.ZodType>(
+  file: string,
+  schema: T,
+  problems: string[],
+  root: string,
+): z.infer<T> | undefined {
   const name = relative(root, file);
   let raw: unknown;
   try {
@@ -57,10 +62,15 @@ export function loadDataset(dataDir = "data"): Dataset {
   const holidaysData = readYaml(join(dataDir, "holidays.yaml"), holidaysFile, problems, root);
 
   const placeIds = new Set(placesData?.places.map((p) => p.id));
+  for (const p of placesData?.places ?? []) {
+    if (p.fareAs && !placeIds.has(p.fareAs))
+      problems.push(`places.yaml: "${p.id}" usa la tarifa del lugar inexistente "${p.fareAs}"`);
+  }
   const stops: Dataset["stops"] = {};
   for (const s of placesData?.stops ?? []) {
     if (stops[s.id]) problems.push(`places.yaml: la parada "${s.id}" está repetida`);
-    if (!placeIds.has(s.place)) problems.push(`places.yaml: la parada "${s.id}" apunta al lugar inexistente "${s.place}"`);
+    if (!placeIds.has(s.place))
+      problems.push(`places.yaml: la parada "${s.id}" apunta al lugar inexistente "${s.place}"`);
     stops[s.id] = { name: s.name, place: s.place };
   }
 
@@ -88,12 +98,15 @@ export function loadDataset(dataDir = "data"): Dataset {
           const trip = Array.isArray(t) ? { times: t } : t;
           const where = `${name} → ${d.id}, horario ${si + 1}, viaje ${ti + 1}`;
           if (trip.times.length !== d.stops.length) {
-            problems.push(`${where}: tiene ${trip.times.length} horas pero el recorrido tiene ${d.stops.length} paradas`);
+            problems.push(
+              `${where}: tiene ${trip.times.length} horas pero el recorrido tiene ${d.stops.length} paradas`,
+            );
           }
-          const present = trip.times.filter((x): x is string => x !== null);
-          if (d.untimedStopsServed) {
-            if (trip.times[0] === null) problems.push(`${where}: con untimedStopsServed la primera parada necesita hora`);
-          } else if (present.length < 2) problems.push(`${where}: necesita al menos dos paradas con hora`);
+          const present = trip.times.filter((x): x is string => x !== null && x !== UNKNOWN);
+          const served = trip.times.filter((x) => x !== null).length;
+          if (served < 2 || present.length < 1) {
+            problems.push(`${where}: necesita al menos dos paradas, y al menos una con hora`);
+          }
           for (let i = 1; i < present.length; i++) {
             if (toMinutes(present[i]) < toMinutes(present[i - 1])) {
               problems.push(`${where}: la hora ${present[i]} es anterior a ${present[i - 1]}`);
@@ -102,14 +115,24 @@ export function loadDataset(dataDir = "data"): Dataset {
           return trip;
         }),
       }));
-      return { id: d.id, stops: d.stops, untimedStopsServed: d.untimedStopsServed, schedules };
+      return { id: d.id, stops: d.stops, schedules };
     });
-    routes.push({ id: r.id, company: r.company, name: r.name, validFrom: r.validFrom, source: r.source, directions });
+    routes.push({
+      id: r.id,
+      company: r.company,
+      name: r.name,
+      service: r.service,
+      validFrom: r.validFrom,
+      source: r.source,
+      directions,
+    });
   }
 
   for (const f of faresData?.fares ?? []) {
-    if (f.company && !companies[f.company]) problems.push(`fares.yaml: la empresa "${f.company}" no está en companies.yaml`);
-    for (const p of f.between) if (!placeIds.has(p)) problems.push(`fares.yaml: el lugar "${p}" no está en places.yaml`);
+    if (f.company && !companies[f.company])
+      problems.push(`fares.yaml: la empresa "${f.company}" no está en companies.yaml`);
+    for (const p of f.between)
+      if (!placeIds.has(p)) problems.push(`fares.yaml: el lugar "${p}" no está en places.yaml`);
   }
 
   if (problems.length) throw new DataError(problems);

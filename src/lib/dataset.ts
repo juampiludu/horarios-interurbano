@@ -9,7 +9,6 @@ export interface Trip {
 export interface Direction {
   id: string;
   stops: string[];
-  untimedStopsServed: boolean;
   schedules: { days: DayType[]; trips: Trip[] }[];
 }
 
@@ -17,6 +16,7 @@ export interface Route {
   id: string;
   company: string;
   name: string;
+  service: "interurban" | "urban";
   validFrom: string;
   source: string;
   directions: Direction[];
@@ -37,7 +37,7 @@ export interface Increase {
 }
 
 export interface Dataset {
-  places: { id: string; name: string; aliases: string[] }[];
+  places: { id: string; name: string; aliases: string[]; fareAs?: string }[];
   stops: Record<string, { name: string; place: string }>;
   companies: Record<string, { name: string; color: string; phone?: string; website?: string }>;
   routes: Route[];

@@ -6,8 +6,7 @@ source: test
 directions:
   - id: outbound
     stops: [cba-terminal, va-centro, mendiolaza-centro]
-    untimedStopsServed: true
     schedules:
       - days: [saturday]
         trips:
-          - ["09:00", null, null]
+          - ["09:00", "?", "?"]

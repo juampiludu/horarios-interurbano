@@ -10,7 +10,10 @@ export const time = z.string().regex(/^([01]\d|2[0-9]):[0-5]\d$/, "Debe ser una 
 
 export const placesFile = z.object({
   // aliases: other spellings used by the news when reporting fares.
-  places: z.array(z.object({ id, name: z.string().min(1), aliases: z.array(z.string()).default([]) })),
+  // fareAs: the place pays the same fares as another one (e.g. El Talar = Mendiolaza).
+  places: z.array(
+    z.object({ id, name: z.string().min(1), aliases: z.array(z.string()).default([]), fareAs: id.optional() }),
+  ),
   stops: z.array(
     z.object({
       id,
@@ -34,21 +37,23 @@ export const companiesFile = z.object({
 });
 
 // A trip is a list of times aligned with the direction's stops; null = does not stop there.
-const tripTimes = z.array(time.nullable());
+// A trip is a list aligned with the direction's stops: a time, "?" (stops there, time unknown) or null (does not stop).
+export const UNKNOWN = "?";
+const tripTimes = z.array(z.union([time, z.literal(UNKNOWN)]).nullable());
 const trip = z.union([tripTimes, z.object({ times: tripTimes, note: z.string().optional() })]);
 
 export const routeFile = z.object({
   id,
   company: id,
   name: z.string().min(1),
+  // Urban lines (inside Mendiolaza/Unquillo/El Talar) are a separate service with their own timetables and fares.
+  service: z.enum(["interurban", "urban"]).default("interurban"),
   validFrom: isoDate,
   source: z.string().min(1),
   directions: z.array(
     z.object({
       id,
       stops: z.array(id).min(2),
-      // The source only gives some times: stops without time (null) are still served, at an unknown time.
-      untimedStopsServed: z.boolean().default(false),
       schedules: z.array(
         z.object({
           days: z.array(z.enum(DAY_TYPES)).min(1),

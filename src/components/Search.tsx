@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "preact/hooks";
+import { useEffect, useMemo, useRef, useState } from "preact/hooks";
 import type { Dataset } from "../lib/dataset";
 import type { DayType } from "../lib/schema";
-import { dayTypeFor, fareFor, findDepartures, nowInCordoba, servedPlaces, toMinutes } from "../lib/query";
+import { dayTypeFor, displayTime, fareFor, findDepartures, nowInCordoba, servedPlaces, toMinutes } from "../lib/query";
 
 const DAY_LABELS: Record<DayType, string> = {
   weekday: "Lunes a viernes",
@@ -54,10 +54,18 @@ export default function Search({ data }: { data: Dataset }) {
   const deps = useMemo(() => findDepartures(data, from, to, day), [data, from, to, day]);
   const isToday = day === today;
   const nextIndex = isToday ? deps.findIndex((d) => toMinutes(d.depart) >= now.minutes) : -1;
-  const usedRoutes = [...new Map(deps.map((d) => [`${d.company}/${d.routeId}`, d])).values()].map(
-    (d) => data.routes.find((r) => r.company === d.company && r.id === d.routeId)!,
+  // Jump (no animation) to the next departure when the trip or day changes, so it is visible without scrolling.
+  const nextRow = useRef<HTMLTableRowElement>(null);
+  useEffect(() => {
+    nextRow.current?.scrollIntoView({ block: "center" });
+  }, [from, to, day, nextIndex === -1]);
+
+  const usedRoutes = [...new Map(deps.map((d) => [`${d.company}/${d.routeId}`, d])).values()].map((d) =>
+    data.routes.find((r) => r.company === d.company && r.id === d.routeId)!,
   );
-  const companies = [...new Set(deps.map((d) => d.company))];
+  // Fares are interurban fares; urban lines have their own (not loaded yet).
+  const companies = [...new Set(deps.filter((d) => d.service === "interurban").map((d) => d.company))];
+  const hasUrban = deps.some((d) => d.service === "urban");
 
   return (
     <>
@@ -103,7 +111,7 @@ export default function Search({ data }: { data: Dataset }) {
         </label>
       </form>
 
-      {companies.length > 0 && (
+      {(companies.length > 0 || hasUrban) && (
         <p class="fares">
           {companies.map((c) => {
             const fare = fareFor(data, c, from, to, now.date);
@@ -112,7 +120,13 @@ export default function Search({ data }: { data: Dataset }) {
                 <i style={{ background: data.companies[c].color }} />
                 {data.companies[c].name}:{" "}
                 {fare ? (
-                  <span title={fare.estimated ? `Estimada a partir de ${money.format(fare.base.price)} (${fare.base.validFrom.split("-").reverse().join("/")}) más los aumentos del ERSeP` : undefined}>
+                  <span
+                    title={
+                      fare.estimated
+                        ? `Estimada a partir de ${money.format(fare.base.price)} (${fare.base.validFrom.split("-").reverse().join("/")}) más los aumentos del ERSeP`
+                        : undefined
+                    }
+                  >
                     {fare.estimated ? `≈ ${money.format(fare.price)} (estimada)` : money.format(fare.price)}
                   </span>
                 ) : (
@@ -121,6 +135,7 @@ export default function Search({ data }: { data: Dataset }) {
               </span>
             );
           })}
+          {hasUrban && <span>Urbanos: tarifa aparte</span>}
         </p>
       )}
 
@@ -140,12 +155,16 @@ export default function Search({ data }: { data: Dataset }) {
           </thead>
           <tbody>
             {deps.map((d, i) => (
-              <tr class={i === nextIndex ? "next" : isToday && (nextIndex === -1 || i < nextIndex) ? "past" : ""}>
-                <td class="time">{d.depart}</td>
-                <td class="time">{d.arrive ?? "—"}</td>
+              <tr
+                ref={i === nextIndex ? nextRow : undefined}
+                class={i === nextIndex ? "next" : isToday && (nextIndex === -1 || i < nextIndex) ? "past" : ""}
+              >
+                <td class="time">{displayTime(d.depart)}</td>
+                <td class="time">{d.arrive ? displayTime(d.arrive) : "—"}</td>
                 <td>
                   <i style={{ background: data.companies[d.company].color }} />
                   {data.companies[d.company].name}
+                  {d.service === "urban" && <small>Urbano</small>}
                 </td>
                 <td class="stop">
                   {data.stops[d.fromStop].name}

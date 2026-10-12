@@ -55,7 +55,17 @@ tests/               tests con datos de prueba
 
 - La línea Córdoba – Talar – Unquillo no tiene horarios publicados. La hora en El Talar es aproximada (el sistema de
   Sarmiento la informa como "Mendiolaza") y no se conoce la hora de llegada al final del recorrido.
+- Ubicación supuesta de algunas paradas de los urbanos: Barrio Golf, Estación Sol y Calle 3 se toman como Mendiolaza, y
+  Corzuelas como un lugar aparte. El horario "en caso de paro o taller docente" del Urbano
+  Talar (FonoBus) no está cargado.
+- Para Unquillo, Córdoba, etc. se muestra la última parada del lugar antes de salir (por ejemplo, Terminal Unquillo y no
+  Frigorífico).
+- **El Talar ≠ Puente Talar.** Puente Talar está sobre la E-57, junto a Muni. Mendiolaza, y cuenta como Mendiolaza. A El
+  Talar (la calle que une la E-57 con la E-53) entran solo algunos: los E-53 de Intercórdoba que no pasan por Mendiolaza,
+  el que sale de El Talar por Villa Allende, la línea por Talar de Sarmiento, los "Talar de Mendiolaza" de FonoBus y los
+  urbanos. Los fines de semana solo entra FonoBus los sábados. Referencia: `sources/community/el-talar-2025-03.jpg`.
 - La Voz y Vía País bloquean el acceso automático: sus notas solo se avisan por título (vía Google News) para revisarlas
   a mano.
+- El Talar paga la misma tarifa que Mendiolaza (`fareAs` en `data/places.yaml`).
 - No hay precios publicados para tramos intermedios (por ejemplo, Villa Allende ⇄ Mendiolaza); se cargan a mano cuando
   se conocen.

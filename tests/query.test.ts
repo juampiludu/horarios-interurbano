@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadDataset } from "../src/lib/load";
-import { dayTypeFor, fareFor, findDepartures, nowInCordoba } from "../src/lib/query";
+import { dayTypeFor, displayTime, fareFor, findDepartures, nowInCordoba } from "../src/lib/query";
 
 const ds = loadDataset("tests/fixtures/data");
 
@@ -9,33 +9,33 @@ describe("findDepartures", () => {
     const deps = findDepartures(ds, "cordoba", "mendiolaza", "weekday");
     expect(deps.map((d) => [d.company, d.depart, d.arrive])).toEqual([
       ["alpha", "06:30", "07:15"],
-      ["alpha", "07:00", "07:55"],
       ["beta", "07:05", "07:50"],
+      ["alpha", "07:10", "07:55"],
     ]);
   });
 
-  it("boards at the first stop of the origin place that the trip serves", () => {
-    const [first] = findDepartures(ds, "cordoba", "mendiolaza", "weekday");
-    expect(first.fromStop).toBe("cba-plaza-espana");
-    expect(first.note).toBe("Sale de Plaza España");
+  it("boards at the last stop of the origin place before leaving it", () => {
+    const deps = findDepartures(ds, "cordoba", "mendiolaza", "weekday");
+    expect(deps.map((d) => d.fromStop)).toEqual(["cba-plaza-espana", "cba-terminal", "cba-plaza-espana"]);
+    expect(deps[0].note).toBe("Sale de Plaza España");
   });
 
   it("skips trips that do not reach the destination", () => {
     const deps = findDepartures(ds, "cordoba", "villa-allende", "weekday");
-    expect(deps.map((d) => d.depart)).toEqual(["06:30", "07:00", "08:00"]);
+    expect(deps.map((d) => d.depart)).toEqual(["06:30", "07:10", "08:10"]);
   });
 
   it("includes trips whose arrival time is unknown", () => {
     const deps = findDepartures(ds, "cordoba", "mendiolaza", "saturday");
     expect(deps.map((d) => [d.company, d.depart, d.arrive])).toEqual([
-      ["alpha", "09:00", "09:55"],
       ["beta", "09:00", null],
+      ["alpha", "09:10", "09:55"],
     ]);
     expect(findDepartures(ds, "villa-allende", "mendiolaza", "saturday").map((d) => d.company)).toEqual(["alpha"]);
   });
 
   it("uses the schedule for the day type", () => {
-    expect(findDepartures(ds, "cordoba", "mendiolaza", "sunday_holiday").map((d) => d.depart)).toEqual(["09:00"]);
+    expect(findDepartures(ds, "cordoba", "mendiolaza", "sunday_holiday").map((d) => d.depart)).toEqual(["09:10"]);
   });
 
   it("respects direction", () => {
@@ -45,6 +45,14 @@ describe("findDepartures", () => {
 
   it("returns nothing for the same place", () => {
     expect(findDepartures(ds, "cordoba", "cordoba", "weekday")).toEqual([]);
+  });
+});
+
+describe("displayTime", () => {
+  it("shows times past midnight as the next day's clock", () => {
+    expect(displayTime("23:59")).toBe("23:59");
+    expect(displayTime("24:00")).toBe("00:00");
+    expect(displayTime("25:07")).toBe("01:07");
   });
 });
 

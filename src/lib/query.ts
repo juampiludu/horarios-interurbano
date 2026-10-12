@@ -1,16 +1,23 @@
 import type { Dataset, Fare } from "./dataset";
-import type { DayType } from "./schema";
+import { UNKNOWN, type DayType } from "./schema";
 
 export interface Departure {
   company: string;
   routeId: string;
   routeName: string;
+  service: "interurban" | "urban";
   fromStop: string;
   toStop: string;
   depart: string;
   /** null when the source does not give arrival times. */
   arrive: string | null;
   note?: string;
+}
+
+/** Times past midnight are stored as 24:xx/25:xx so they sort after the evening; show them as 00:xx/01:xx. */
+export function displayTime(t: string): string {
+  const [h, m] = t.split(":").map(Number);
+  return `${String(h % 24).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
 export function toMinutes(t: string): number {
@@ -66,18 +73,24 @@ export function findDepartures(ds: Dataset, fromPlace: string, toPlace: string, 
       for (const sch of dir.schedules) {
         if (!sch.days.includes(dayType)) continue;
         for (const trip of sch.trips) {
-          const i = places.findIndex((p, k) => p === fromPlace && trip.times[k] !== null);
-          if (i < 0) continue;
-          const j = places.findIndex((p, k) => k > i && p === toPlace && (dir.untimedStopsServed || trip.times[k] !== null));
+          // You can only board where the time is known; you can get off where it is unknown ("?").
+          const timed = (k: number) => trip.times[k] !== null && trip.times[k] !== UNKNOWN;
+          const first = places.findIndex((p, k) => p === fromPlace && timed(k));
+          if (first < 0) continue;
+          const j = places.findIndex((p, k) => k > first && p === toPlace && trip.times[k] !== null);
           if (j < 0) continue;
+          // Board at the last stop of the origin place before leaving it (e.g. Terminal Unquillo, not Frigorífico).
+          let i = first;
+          for (let k = first + 1; k < j; k++) if (places[k] === fromPlace && timed(k)) i = k;
           out.push({
             company: route.company,
             routeId: route.id,
             routeName: route.name,
+            service: route.service,
             fromStop: dir.stops[i],
             toStop: dir.stops[j],
             depart: trip.times[i]!,
-            arrive: trip.times[j],
+            arrive: trip.times[j] === UNKNOWN ? null : trip.times[j],
             note: trip.note,
           });
         }
@@ -101,7 +114,9 @@ export interface FareQuote {
  * Starts from the latest observed fare (company-specific wins over generic on the same date) and applies every
  * increase that came into force after it, rounding after each step as companies do.
  */
-export function fareFor(ds: Dataset, company: string, a: string, b: string, date: string): FareQuote | undefined {
+export function fareFor(ds: Dataset, company: string, from: string, to: string, date: string): FareQuote | undefined {
+  const fareAs = (id: string) => ds.places.find((p) => p.id === id)?.fareAs ?? id;
+  const [a, b] = [fareAs(from), fareAs(to)];
   const base = ds.fares
     .filter(
       (f) =>

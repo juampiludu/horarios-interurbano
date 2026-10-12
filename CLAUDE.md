@@ -12,7 +12,10 @@ Static site (Astro + Preact island) that merges bus timetables for Córdoba ⇄ 
 - `data/places.yaml`: `places` (what the user picks) and `stops` (boarding points, each belongs to a place).
 - `data/routes/<company>/<route>.yaml`: per direction, ordered `stops` and `schedules[].trips`; a trip is a list of
   times aligned with the stops (`null` = does not stop). Day types: `weekday`, `saturday`, `sunday_holiday`.
-  With `untimedStopsServed: true`, `null` means "stops at an unknown time" (sources that only give some times).
+  `"?"` means "stops there, time unknown" (you can get off there but not board).
+  `service: urban` marks urban lines: a separate service with its own timetables and fares (interurban fares don't apply).
+- El Talar ≠ Puente Talar: Puente Talar (on the E-57, next to Muni. Mendiolaza) belongs to Mendiolaza; only some buses
+  enter El Talar. Timetable sheets the user provides are the source of truth (see `sources/community/`).
 - `data/fares.yaml`: observed fares per pair of places (company optional = applies to all) plus the series of ERSeP
   increases since 2025. The app projects the latest observed fare with later increases, rounding to `rounding` after
   each step, and shows it as "estimada". Places have `aliases` used to match destination names in news articles.
@@ -24,6 +27,8 @@ Static site (Astro + Preact island) that merges bus timetables for Córdoba ⇄ 
 - `npm test`: query logic tests (fixtures in `tests/fixtures/data`).
 - `npm run typecheck`: Astro/TS type check.
 - `npm run dev` / `npm run build`; `DATA_DIR=tests/fixtures/data npm run dev` previews with fixture data.
+- `npx tsx scripts/audit.ts [company]`: every origin → destination the app offers, per company and service, with trip
+  counts per day type. Review it after loading timetables; `tests/data.test.ts` holds facts confirmed by the user.
 - `npx tsx scripts/watch-sarmiento.ts`: detect new Sarmiento timetable images (config in `data/watch/sarmiento.yaml`).
 - `npx tsx scripts/fetch-sarmiento-departures.ts <fromId> <toId> <dd/mm/yyyy>`: query Sarmiento's booking system
   (only source for the Córdoba – Talar – Unquillo line; partial and sometimes inconsistent data).
