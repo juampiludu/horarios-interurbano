@@ -7,6 +7,15 @@ Static site (Astro + Preact island) that merges bus timetables for Córdoba ⇄ 
 - **Language**: all code in English (identifiers, file/dir names, YAML keys, comments, commits).
   Everything user-facing (UI, error/validation messages, auto-generated Issues/PRs) in Argentine Spanish (voseo).
 - **UI**: plain and fast. No animations, no UI libraries, single screen, plain CSS in `src/styles/global.css`.
+  One island (`src/components/Search.tsx`): service selector (interurban default / urban), from/to/day, filters
+  (`filterDepartures` in `query.ts`), trips table. Company colors come from the community sheet.
+- **Browser bundle**: `query.ts` and `dataset.ts` run in the browser. Keep them free of runtime imports from
+  `schema.ts`/zod or Node modules (only `import type`); shared constants such as `UNKNOWN` live in `dataset.ts`.
+  Importing zod there once broke hydration in dev (nothing updated) and grew the island from 8 KB to 96 KB.
+- **Data sources**: timetable sheets the user provides are the source of truth; load them literally. Only physically
+  impossible combinations are typos (e.g. a "Por Aeropuerto" trip never passes CPC Argüello). Check routes against
+  `sources/community/routes-map.jpg` and ask the user on conflicts. Never load an assumption about where a stop is
+  without asking.
 
 ## Data model
 - `data/places.yaml`: `places` (what the user picks) and `stops` (boarding points, each belongs to a place).
@@ -15,7 +24,7 @@ Static site (Astro + Preact island) that merges bus timetables for Córdoba ⇄ 
   `"?"` means "stops there, time unknown" (you can get off there but not board).
   `service: urban` marks urban lines: a separate service with its own timetables and fares (interurban fares don't apply).
 - El Talar ≠ Puente Talar: Puente Talar (on the E-57, next to Muni. Mendiolaza) belongs to Mendiolaza; only some buses
-  enter El Talar. Timetable sheets the user provides are the source of truth (see `sources/community/`).
+  enter El Talar (see `sources/community/el-talar-2025-03.jpg`). El Talar uses Mendiolaza's fare (`fareAs`).
 - `data/fares.yaml`: observed fares per pair of places (company optional = applies to all) plus the series of ERSeP
   increases since 2025. The app projects the latest observed fare with later increases, rounding to `rounding` after
   each step, and shows it as "estimada". Places have `aliases` used to match destination names in news articles.
@@ -27,11 +36,12 @@ Static site (Astro + Preact island) that merges bus timetables for Córdoba ⇄ 
 - `npm test`: query logic tests (fixtures in `tests/fixtures/data`).
 - `npm run typecheck`: Astro/TS type check.
 - `npm run dev` / `npm run build`; `DATA_DIR=tests/fixtures/data npm run dev` previews with fixture data.
+  Add `-- --host [--port N]` to test from a phone on the local network.
 - `npx tsx scripts/audit.ts [company]`: every origin → destination the app offers, per company and service, with trip
   counts per day type. Review it after loading timetables; `tests/data.test.ts` holds facts confirmed by the user.
 - `npx tsx scripts/watch-sarmiento.ts`: detect new Sarmiento timetable images (config in `data/watch/sarmiento.yaml`).
 - `npx tsx scripts/fetch-sarmiento-departures.ts <fromId> <toId> <dd/mm/yyyy>`: query Sarmiento's booking system
-  (only source for the Córdoba – Talar – Unquillo line; partial and sometimes inconsistent data).
+  (reference only: partial and sometimes inconsistent; the Talar line comes from the community sheet).
 - `npx tsx scripts/watch-fares.ts [--url <article>] [--apply]`: extract fares from news (El Doce, Cba24n, Perfil,
   Cadena 3; La Voz and Vía País block bots and are only reported by title via Google News) and new increases from
   ERSeP's WordPress API. ERSeP publishes only the per-km rate, not prices per destination; increases split in stages
