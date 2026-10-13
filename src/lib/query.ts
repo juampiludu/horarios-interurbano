@@ -1,5 +1,5 @@
-import type { Dataset, Fare } from "./dataset";
-import { UNKNOWN, type DayType } from "./schema";
+import { UNKNOWN, type Dataset, type Fare } from "./dataset";
+import type { DayType } from "./schema";
 
 export type Service = "interurban" | "urban";
 
@@ -138,4 +138,22 @@ export function fareFor(ds: Dataset, company: string, from: string, to: string, 
     base.price,
   );
   return { price, estimated: pending.length > 0, base };
+}
+
+export interface DepartureFilters {
+  /** Companies to leave out. */
+  hiddenCompanies?: string[];
+  /** Earliest departure, HH:MM. */
+  departAfter?: string;
+  /** Latest arrival, HH:MM. Trips with unknown arrival are left out because they can't be guaranteed. */
+  arriveBefore?: string;
+}
+
+export function filterDepartures(deps: Departure[], f: DepartureFilters): Departure[] {
+  return deps.filter(
+    (d) =>
+      !f.hiddenCompanies?.includes(d.company) &&
+      (!f.departAfter || toMinutes(d.depart) >= toMinutes(f.departAfter)) &&
+      (!f.arriveBefore || (d.arrive !== null && toMinutes(d.arrive) <= toMinutes(f.arriveBefore))),
+  );
 }

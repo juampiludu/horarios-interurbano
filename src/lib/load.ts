@@ -2,8 +2,8 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 import { parse } from "yaml";
 import { z } from "zod";
-import { UNKNOWN, companiesFile, faresFile, holidaysFile, placesFile, routeFile } from "./schema";
-import type { Dataset, Route } from "./dataset";
+import { companiesFile, faresFile, holidaysFile, placesFile, routeFile } from "./schema";
+import { UNKNOWN, type Dataset, type Route } from "./dataset";
 
 z.config(z.locales.es());
 

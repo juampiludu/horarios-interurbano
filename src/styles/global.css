@@ -32,6 +32,14 @@ select { width: 100%; min-width: 0; }
 select, button { font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: .45rem; }
 .swap { cursor: pointer; padding: .45rem .7rem; }
 
+.filters { margin-top: .75rem; font-size: .9rem; }
+.filters summary { cursor: pointer; color: var(--muted); }
+.filters fieldset { border: 0; margin: .5rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: .25rem 1rem; }
+.filters legend { padding: 0; font-size: .8rem; color: var(--muted); margin-bottom: .2rem; }
+.filters .times { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-top: .5rem; }
+.filters .times label { display: grid; gap: .2rem; font-size: .8rem; color: var(--muted); }
+.filters input[type="time"] { font: inherit; color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: .4rem; min-width: 0; }
+.filters button { margin-top: .5rem; cursor: pointer; }
 i { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: .35rem; }
 .fares { display: flex; flex-wrap: wrap; gap: .25rem 1rem; font-size: .9rem; margin: .9rem 0 .4rem; }
 .empty { color: var(--muted); margin-top: 1.5rem; }

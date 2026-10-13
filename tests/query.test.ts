@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { loadDataset } from "../src/lib/load";
-import { dayTypeFor, displayTime, fareFor, findDepartures, nowInCordoba } from "../src/lib/query";
+import { dayTypeFor, displayTime, fareFor, filterDepartures, findDepartures, nowInCordoba } from "../src/lib/query";
 
 const ds = loadDataset("tests/fixtures/data");
 
@@ -45,6 +45,32 @@ describe("findDepartures", () => {
 
   it("returns nothing for the same place", () => {
     expect(findDepartures(ds, "cordoba", "cordoba", "weekday")).toEqual([]);
+  });
+});
+
+describe("filterDepartures", () => {
+  const deps = findDepartures(ds, "cordoba", "mendiolaza", "weekday");
+  const show = (f: Parameters<typeof filterDepartures>[1]) =>
+    filterDepartures(deps, f).map((d) => `${d.company} ${d.depart}`);
+
+  it("returns everything without filters", () => {
+    expect(show({})).toEqual(["alpha 06:30", "beta 07:05", "alpha 07:10"]);
+  });
+
+  it("hides companies", () => {
+    expect(show({ hiddenCompanies: ["alpha"] })).toEqual(["beta 07:05"]);
+  });
+
+  it("filters by earliest departure and latest arrival (inclusive)", () => {
+    expect(show({ departAfter: "07:05" })).toEqual(["beta 07:05", "alpha 07:10"]);
+    expect(show({ arriveBefore: "07:50" })).toEqual(["alpha 06:30", "beta 07:05"]);
+    expect(show({ departAfter: "07:00", arriveBefore: "07:50" })).toEqual(["beta 07:05"]);
+  });
+
+  it("leaves out trips with unknown arrival when filtering by arrival", () => {
+    const sat = findDepartures(ds, "cordoba", "mendiolaza", "saturday");
+    expect(filterDepartures(sat, {}).length).toBe(2);
+    expect(filterDepartures(sat, { arriveBefore: "23:00" }).map((d) => d.company)).toEqual(["alpha"]);
   });
 });
 

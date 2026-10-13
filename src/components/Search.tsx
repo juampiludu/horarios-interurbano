@@ -5,6 +5,7 @@ import {
   dayTypeFor,
   displayTime,
   fareFor,
+  filterDepartures,
   findDepartures,
   nowInCordoba,
   servedPlaces,
@@ -89,9 +90,19 @@ export default function Search({ data }: { data: Dataset }) {
     }
   }, [service, from, to]);
 
-  const deps = useMemo(
+  const [hiddenCompanies, setHiddenCompanies] = useState<string[]>([]);
+  const [departAfter, setDepartAfter] = useState("");
+  const [arriveBefore, setArriveBefore] = useState("");
+  const activeFilters = hiddenCompanies.length + (departAfter ? 1 : 0) + (arriveBefore ? 1 : 0);
+
+  const allDeps = useMemo(
     () => findDepartures(data, from, to, day).filter((d) => d.service === service),
     [data, service, from, to, day],
+  );
+  const tripCompanies = [...new Set(allDeps.map((d) => d.company))];
+  const deps = useMemo(
+    () => filterDepartures(allDeps, { hiddenCompanies, departAfter, arriveBefore }),
+    [allDeps, hiddenCompanies, departAfter, arriveBefore],
   );
   const isToday = day === today;
   const nextIndex = isToday ? deps.findIndex((d) => toMinutes(d.depart) >= now.minutes) : -1;
@@ -99,7 +110,7 @@ export default function Search({ data }: { data: Dataset }) {
   const nextRow = useRef<HTMLTableRowElement>(null);
   useEffect(() => {
     nextRow.current?.scrollIntoView({ block: "center" });
-  }, [service, from, to, day, nextIndex === -1]);
+  }, [service, from, to, day, hiddenCompanies, departAfter, arriveBefore, nextIndex === -1]);
 
   const usedRoutes = [...new Map(deps.map((d) => [`${d.company}/${d.routeId}`, d])).values()].map((d) =>
     data.routes.find((r) => r.company === d.company && r.id === d.routeId)!,
@@ -165,6 +176,52 @@ export default function Search({ data }: { data: Dataset }) {
         </label>
       </form>
 
+      <details class="filters">
+        <summary>Filtros{activeFilters > 0 && ` (${activeFilters})`}</summary>
+        {tripCompanies.length > 1 && (
+          <fieldset>
+            <legend>Empresas</legend>
+            {tripCompanies.map((c) => (
+              <label>
+                <input
+                  type="checkbox"
+                  checked={!hiddenCompanies.includes(c)}
+                  onChange={(e) =>
+                    setHiddenCompanies(
+                      e.currentTarget.checked ? hiddenCompanies.filter((h) => h !== c) : [...hiddenCompanies, c],
+                    )
+                  }
+                />
+                <i style={{ background: data.companies[c].color }} />
+                {data.companies[c].name}
+              </label>
+            ))}
+          </fieldset>
+        )}
+        <div class="times">
+          <label>
+            Salir desde
+            <input type="time" value={departAfter} onInput={(e) => setDepartAfter(e.currentTarget.value)} />
+          </label>
+          <label>
+            Llegar antes de
+            <input type="time" value={arriveBefore} onInput={(e) => setArriveBefore(e.currentTarget.value)} />
+          </label>
+        </div>
+        {activeFilters > 0 && (
+          <button
+            type="button"
+            onClick={() => {
+              setHiddenCompanies([]);
+              setDepartAfter("");
+              setArriveBefore("");
+            }}
+          >
+            Limpiar filtros
+          </button>
+        )}
+      </details>
+
       {service === "urban" && deps.length > 0 && <p class="fares">Tarifa urbana: sin cargar</p>}
       {companies.length > 0 && (
         <p class="fares">
@@ -195,6 +252,8 @@ export default function Search({ data }: { data: Dataset }) {
 
       {from === to ? (
         <p class="empty">Elegí un origen y un destino distintos.</p>
+      ) : allDeps.length > 0 && deps.length === 0 ? (
+        <p class="empty">Ningún viaje coincide con los filtros.</p>
       ) : deps.length === 0 ? (
         <p class="empty">No hay horarios cargados para este tramo en {DAY_LABELS[day].toLowerCase()}.</p>
       ) : (

@@ -1,5 +1,9 @@
 import type { DayType } from "./schema";
 
+// Shared with the browser bundle: keep this file free of runtime imports (no zod).
+/** Trip time meaning "stops there, time unknown". */
+export const UNKNOWN = "?";
+
 // Normalized, JSON-serializable data shipped to the browser.
 export interface Trip {
   times: (string | null)[];
