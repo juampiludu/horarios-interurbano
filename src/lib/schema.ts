@@ -37,7 +37,6 @@ export const companiesFile = z.object({
   ),
 });
 
-// A trip is a list of times aligned with the direction's stops; null = does not stop there.
 // A trip is a list aligned with the direction's stops: a time, "?" (stops there, time unknown) or null (does not stop).
 const tripTimes = z.array(z.union([time, z.literal(UNKNOWN)]).nullable());
 const trip = z.union([tripTimes, z.object({ times: tripTimes, note: z.string().optional() })]);
