@@ -36,7 +36,10 @@ Static site (Astro + Preact island) that merges bus timetables for Córdoba ⇄ 
 - `npm test`: query logic tests (fixtures in `tests/fixtures/data`).
 - `npm run typecheck`: Astro/TS type check.
 - `npm run dev` / `npm run build`; `DATA_DIR=tests/fixtures/data npm run dev` previews with fixture data.
-  Add `-- --host [--port N]` to test from a phone on the local network.
+  Add `-- --host [--port N]` to test from a phone on the local network. With `base` set, the site lives under
+  `/horarios-interurbano/` (also in dev: http://localhost:4321/horarios-interurbano/).
+- Deploy: `.github/workflows/deploy.yml` builds (`npm run build`, which validates data) and publishes to GitHub Pages
+  on every push to `master` → https://juampiludu.github.io/horarios-interurbano/. Internal links must include `base`.
 - `npx tsx scripts/audit.ts [company]`: every origin → destination the app offers, per company and service, with trip
   counts per day type. Review it after loading timetables; `tests/data.test.ts` holds facts confirmed by the user.
 - `npx tsx scripts/watch-sarmiento.ts`: detect new Sarmiento timetable images (config in `data/watch/sarmiento.yaml`).
