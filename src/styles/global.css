@@ -42,6 +42,10 @@ select, button { font: inherit; color: var(--fg); background: var(--bg); border:
 .filters button { margin-top: .5rem; cursor: pointer; }
 i { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; margin-right: .35rem; }
 .fares { display: flex; flex-wrap: wrap; gap: .25rem 1rem; font-size: .9rem; margin: .9rem 0 .4rem; }
+.hide-past { display: flex; align-items: center; gap: .4rem; font-size: .9rem; margin-top: .75rem; }
+.site-footer { margin: 2rem 0 1rem; padding-top: .75rem; border-top: 1px solid var(--line); font-size: .8rem; color: var(--muted); display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem; }
+.site-footer a { color: inherit; display: inline-flex; align-items: center; gap: .3rem; }
+.site-footer svg { width: 1rem; height: 1rem; fill: currentColor; }
 .empty { color: var(--muted); margin-top: 1.5rem; }
 
 .trips { width: 100%; border-collapse: collapse; margin-top: .5rem; font-size: .95rem; }

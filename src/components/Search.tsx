@@ -19,76 +19,43 @@ const DAY_LABELS: Record<DayType, string> = {
   sunday_holiday: "Domingo y feriado",
 };
 const SERVICE_LABELS: Record<Service, string> = { interurban: "Interurbano", urban: "Urbano" };
-const DEFAULT_TRIP: Record<Service, { from: string; to: string }> = {
-  interurban: { from: "cordoba", to: "mendiolaza" },
-  urban: { from: "el-talar", to: "mendiolaza" },
-};
-const STORAGE_KEY = "lastTrip";
-
-interface Stored {
-  service: Service;
-  trips: Partial<Record<Service, { from: string; to: string }>>;
-}
+// Only this preference is remembered; the trip always starts empty so the user picks it.
+const HIDE_PAST_KEY = "hidePast";
+// Older versions remembered the last trip here; it is removed on load.
+const LEGACY_TRIP_KEY = "lastTrip";
 
 const money = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS", maximumFractionDigits: 0 });
-
-function readStored(): Stored {
-  try {
-    const raw = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "null");
-    if (raw?.trips) return raw;
-    // Older format: a single interurban trip.
-    if (raw?.from) return { service: "interurban", trips: { interurban: { from: raw.from, to: raw.to } } };
-  } catch {
-    // Storage unavailable or corrupt: start from the defaults.
-  }
-  return { service: "interurban", trips: {} };
-}
 
 export default function Search({ data }: { data: Dataset }) {
   const placesFor = (service: Service) => {
     const served = servedPlaces(data, service);
     return served.length ? served : data.places;
   };
-  // A valid trip for the service: the remembered one if its places are served, else the default, else the first two.
-  const tripFor = (service: Service, stored: Stored) => {
-    const places = placesFor(service);
-    const ok = (t?: { from: string; to: string }) =>
-      t && places.some((p) => p.id === t.from) && places.some((p) => p.id === t.to) ? t : undefined;
-    return ok(stored.trips[service]) ?? ok(DEFAULT_TRIP[service]) ?? { from: places[0]?.id, to: places[1]?.id };
-  };
-
   const [now, setNow] = useState(() => nowInCordoba());
   const today = dayTypeFor(now.date, now.weekday, data.holidays);
   const [service, setService] = useState<Service>("interurban");
-  const [from, setFrom] = useState(DEFAULT_TRIP.interurban.from);
-  const [to, setTo] = useState(DEFAULT_TRIP.interurban.to);
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [hidePast, setHidePast] = useState(false);
   const [day, setDay] = useState<DayType>(today);
   const places = useMemo(() => placesFor(service), [data, service]);
 
   const switchService = (next: Service) => {
-    const trip = tripFor(next, readStored());
     setService(next);
-    setFrom(trip.from);
-    setTo(trip.to);
+    setFrom("");
+    setTo("");
   };
 
   useEffect(() => {
-    const stored = readStored();
-    switchService(stored.service);
+    try {
+      localStorage.removeItem(LEGACY_TRIP_KEY);
+      setHidePast(localStorage.getItem(HIDE_PAST_KEY) === "1");
+    } catch {
+      // Storage unavailable: show every trip.
+    }
     const timer = setInterval(() => setNow(nowInCordoba()), 30_000);
     return () => clearInterval(timer);
   }, []);
-
-  useEffect(() => {
-    try {
-      const stored = readStored();
-      stored.service = service;
-      stored.trips[service] = { from, to };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(stored));
-    } catch {
-      // Storage unavailable (private mode): just don't remember the choice.
-    }
-  }, [service, from, to]);
 
   const [hiddenCompanies, setHiddenCompanies] = useState<string[]>([]);
   const [departAfter, setDepartAfter] = useState("");
@@ -105,18 +72,31 @@ export default function Search({ data }: { data: Dataset }) {
     [allDeps, hiddenCompanies, departAfter, arriveBefore],
   );
   const isToday = day === today;
-  const nextIndex = isToday ? deps.findIndex((d) => toMinutes(d.depart) >= now.minutes) : -1;
+  const firstUpcoming = isToday ? deps.findIndex((d) => toMinutes(d.depart) >= now.minutes) : -1;
+  // "Ocultar los que ya pasaron" only applies to today's timetable.
+  const hidingPast = hidePast && isToday;
+  const shown = hidingPast ? (firstUpcoming < 0 ? [] : deps.slice(firstUpcoming)) : deps;
+  const nextIndex = hidingPast ? (shown.length ? 0 : -1) : firstUpcoming;
   // Jump (no animation) to the next departure when the trip or day changes, so it is visible without scrolling.
   const nextRow = useRef<HTMLTableRowElement>(null);
   useEffect(() => {
     nextRow.current?.scrollIntoView({ block: "center" });
-  }, [service, from, to, day, hiddenCompanies, departAfter, arriveBefore, nextIndex === -1]);
+  }, [service, from, to, day, hiddenCompanies, departAfter, arriveBefore, hidingPast, nextIndex === -1]);
 
-  const usedRoutes = [...new Map(deps.map((d) => [`${d.company}/${d.routeId}`, d])).values()].map((d) =>
+  const toggleHidePast = (value: boolean) => {
+    setHidePast(value);
+    try {
+      localStorage.setItem(HIDE_PAST_KEY, value ? "1" : "0");
+    } catch {
+      // Storage unavailable: the choice lasts until the page is reloaded.
+    }
+  };
+
+  const usedRoutes = [...new Map(shown.map((d) => [`${d.company}/${d.routeId}`, d])).values()].map((d) =>
     data.routes.find((r) => r.company === d.company && r.id === d.routeId)!,
   );
   // Fares are interurban fares; urban lines have their own (not loaded yet).
-  const companies = service === "interurban" ? [...new Set(deps.map((d) => d.company))] : [];
+  const companies = service === "interurban" ? [...new Set(shown.map((d) => d.company))] : [];
   const toPlaceName = places.find((p) => p.id === to)?.name;
 
   return (
@@ -138,6 +118,9 @@ export default function Search({ data }: { data: Dataset }) {
         <label>
           Desde
           <select value={from} onChange={(e) => setFrom(e.currentTarget.value)}>
+            <option value="" disabled>
+              Elegí…
+            </option>
             {places.map((p) => (
               <option value={p.id}>{p.name}</option>
             ))}
@@ -158,6 +141,9 @@ export default function Search({ data }: { data: Dataset }) {
         <label>
           Hasta
           <select value={to} onChange={(e) => setTo(e.currentTarget.value)}>
+            <option value="" disabled>
+              Elegí…
+            </option>
             {places.map((p) => (
               <option value={p.id}>{p.name}</option>
             ))}
@@ -222,7 +208,7 @@ export default function Search({ data }: { data: Dataset }) {
         )}
       </details>
 
-      {service === "urban" && deps.length > 0 && <p class="fares">Tarifa urbana: sin cargar</p>}
+      {service === "urban" && shown.length > 0 && <p class="fares">Tarifa urbana: sin cargar</p>}
       {companies.length > 0 && (
         <p class="fares">
           {companies.map((c) => {
@@ -250,12 +236,23 @@ export default function Search({ data }: { data: Dataset }) {
         </p>
       )}
 
-      {from === to ? (
+      {isToday && from && to && from !== to && deps.length > 0 && (
+        <label class="hide-past">
+          <input type="checkbox" checked={hidePast} onChange={(e) => toggleHidePast(e.currentTarget.checked)} />
+          Ocultar los que ya pasaron
+        </label>
+      )}
+
+      {!from || !to ? (
+        <p class="empty">Elegí desde dónde y hasta dónde viajás.</p>
+      ) : from === to ? (
         <p class="empty">Elegí un origen y un destino distintos.</p>
       ) : allDeps.length > 0 && deps.length === 0 ? (
         <p class="empty">Ningún viaje coincide con los filtros.</p>
       ) : deps.length === 0 ? (
         <p class="empty">No hay horarios cargados para este tramo en {DAY_LABELS[day].toLowerCase()}.</p>
+      ) : shown.length === 0 ? (
+        <p class="empty">Ya no quedan viajes hoy para este tramo.</p>
       ) : (
         <table class="trips">
           <thead>
@@ -267,7 +264,7 @@ export default function Search({ data }: { data: Dataset }) {
             </tr>
           </thead>
           <tbody>
-            {deps.map((d, i) => (
+            {shown.map((d, i) => (
               <tr
                 ref={i === nextIndex ? nextRow : undefined}
                 class={i === nextIndex ? "next" : isToday && (nextIndex === -1 || i < nextIndex) ? "past" : ""}
