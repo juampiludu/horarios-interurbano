@@ -1,8 +1,8 @@
 id: cordoba-saldan-talar
 company: fonobus
 name: Córdoba – Saldán / Talar de Mendiolaza
-# The timetable only says "2026". Saldán trips pass CPC Argüello (sources/community/routes-map.jpg, blue), with no
-# time in the sheet ("?"). It also runs on Saturdays, all day (confirmed by the user and
+# The timetable only says "2026". Saldán trips pass CPC Argüello (sources/community/routes-map.jpg, blue); the sheet
+# has no time for it, so it is estimated like Intercórdoba's E-57, which takes the same road: Córdoba ± 35'. It also runs on Saturdays, all day (confirmed by the user and
 # sources/community/el-talar-2025-03.jpg).
 validFrom: "2026-01-01"
 source: sources/fonobus/Saldan-Talar.jpg.jpeg
@@ -12,68 +12,68 @@ directions:
     schedules:
       - days: [weekday, saturday]
         trips:
-          - ["06:30", "?", "07:30", "07:45", "08:00", null, null]
+          - { times: ["06:30", "07:05", "07:30", "07:45", "08:00", null, null], note: Hora en Argüello estimada }
           - { times: ["07:25", null, null, null, null, "08:15", "08:25"], note: Por El Talar }
-          - ["07:30", "?", "08:30", "08:45", "09:00", null, null]
-          - ["08:00", "?", "09:00", null, "09:15", null, null]
-          - ["08:30", "?", "09:30", "09:45", "10:00", null, null]
-          - ["09:00", "?", "10:00", null, "10:15", null, null]
-          - ["09:30", "?", "10:30", null, "10:45", null, null]
-          - ["10:00", "?", "11:00", null, "11:15", null, null]
+          - { times: ["07:30", "08:05", "08:30", "08:45", "09:00", null, null], note: Hora en Argüello estimada }
+          - { times: ["08:00", "08:35", "09:00", null, "09:15", null, null], note: Hora en Argüello estimada }
+          - { times: ["08:30", "09:05", "09:30", "09:45", "10:00", null, null], note: Hora en Argüello estimada }
+          - { times: ["09:00", "09:35", "10:00", null, "10:15", null, null], note: Hora en Argüello estimada }
+          - { times: ["09:30", "10:05", "10:30", null, "10:45", null, null], note: Hora en Argüello estimada }
+          - { times: ["10:00", "10:35", "11:00", null, "11:15", null, null], note: Hora en Argüello estimada }
           - { times: ["10:10", null, null, null, null, "11:00", "11:10"], note: Por El Talar }
-          - ["10:45", "?", "11:30", "11:45", "12:00", null, null]
-          - ["11:30", "?", "12:30", "12:45", "13:00", null, null]
-          - ["12:00", "?", "13:00", null, "13:15", null, null]
-          - ["12:30", "?", "13:30", "13:45", "14:00", null, null]
+          - { times: ["10:45", "11:20", "11:30", "11:45", "12:00", null, null], note: Hora en Argüello estimada }
+          - { times: ["11:30", "12:05", "12:30", "12:45", "13:00", null, null], note: Hora en Argüello estimada }
+          - { times: ["12:00", "12:35", "13:00", null, "13:15", null, null], note: Hora en Argüello estimada }
+          - { times: ["12:30", "13:05", "13:30", "13:45", "14:00", null, null], note: Hora en Argüello estimada }
           - { times: ["12:50", null, null, null, null, "13:40", "13:50"], note: Por El Talar }
-          - ["13:00", "?", "14:00", null, "14:15", null, null]
-          - ["13:50", "?", "14:50", "14:50", "15:20", null, null]
-          - ["14:15", "?", "15:15", null, "15:30", null, null]
-          - ["15:00", "?", "16:00", null, "16:30", null, null]
+          - { times: ["13:00", "13:35", "14:00", null, "14:15", null, null], note: Hora en Argüello estimada }
+          - { times: ["13:50", "14:25", "14:50", "14:50", "15:20", null, null], note: Hora en Argüello estimada }
+          - { times: ["14:15", "14:50", "15:15", null, "15:30", null, null], note: Hora en Argüello estimada }
+          - { times: ["15:00", "15:35", "16:00", null, "16:30", null, null], note: Hora en Argüello estimada }
           - { times: ["15:50", null, null, null, null, "16:40", "16:50"], note: Por El Talar }
-          - ["16:00", "?", "17:00", null, "17:15", null, null]
-          - ["16:30", "?", "17:30", "17:45", "18:00", null, null]
-          - ["17:00", "?", "18:00", null, "18:15", null, null]
-          - ["18:05", "?", "19:05", null, "19:35", null, null]
-          - ["18:25", "?", "19:25", "19:40", "19:55", null, null]
+          - { times: ["16:00", "16:35", "17:00", null, "17:15", null, null], note: Hora en Argüello estimada }
+          - { times: ["16:30", "17:05", "17:30", "17:45", "18:00", null, null], note: Hora en Argüello estimada }
+          - { times: ["17:00", "17:35", "18:00", null, "18:15", null, null], note: Hora en Argüello estimada }
+          - { times: ["18:05", "18:40", "19:05", null, "19:35", null, null], note: Hora en Argüello estimada }
+          - { times: ["18:25", "19:00", "19:25", "19:40", "19:55", null, null], note: Hora en Argüello estimada }
           - { times: ["18:50", null, null, null, null, "19:40", "19:50"], note: Por El Talar }
-          - ["19:00", "?", "20:00", "20:15", "20:30", null, null]
-          - ["19:30", "?", "20:30", null, "20:45", null, null]
-          - ["20:00", "?", "21:00", null, "21:15", null, null]
-          - ["21:15", "?", "22:15", null, "22:30", null, null]
+          - { times: ["19:00", "19:35", "20:00", "20:15", "20:30", null, null], note: Hora en Argüello estimada }
+          - { times: ["19:30", "20:05", "20:30", null, "20:45", null, null], note: Hora en Argüello estimada }
+          - { times: ["20:00", "20:35", "21:00", null, "21:15", null, null], note: Hora en Argüello estimada }
+          - { times: ["21:15", "21:50", "22:15", null, "22:30", null, null], note: Hora en Argüello estimada }
           - { times: ["22:00", null, null, null, null, "22:50", "23:00"], note: Por El Talar }
-          - ["22:00", "?", "23:00", null, "23:15", null, null]
+          - { times: ["22:00", "22:35", "23:00", null, "23:15", null, null], note: Hora en Argüello estimada }
   - id: inbound
     stops: [mendiolaza, el-talar, saldan, va-golf, villa-allende, cba-cpc-arguello, cba]
     schedules:
       - days: [weekday, saturday]
         trips:
           - { times: ["06:15", "06:25", null, null, null, null, "07:15"], note: Por El Talar }
-          - [null, null, "06:00", null, "06:15", "?", "07:15"]
-          - [null, null, "06:15", null, "06:30", "?", "07:30"]
-          - [null, null, "06:30", "06:45", "07:00", "?", "08:00"]
-          - [null, null, "06:40", null, "06:55", "?", "08:00"]
-          - [null, null, "07:15", "07:30", "07:45", "?", "08:45"]
-          - [null, null, "08:15", null, "08:30", "?", "09:30"]
+          - { times: [null, null, "06:00", null, "06:15", "06:40", "07:15"], note: Hora en Argüello estimada }
+          - { times: [null, null, "06:15", null, "06:30", "06:55", "07:30"], note: Hora en Argüello estimada }
+          - { times: [null, null, "06:30", "06:45", "07:00", "07:25", "08:00"], note: Hora en Argüello estimada }
+          - { times: [null, null, "06:40", null, "06:55", "07:25", "08:00"], note: Hora en Argüello estimada }
+          - { times: [null, null, "07:15", "07:30", "07:45", "08:10", "08:45"], note: Hora en Argüello estimada }
+          - { times: [null, null, "08:15", null, "08:30", "08:55", "09:30"], note: Hora en Argüello estimada }
           - { times: ["08:45", "09:00", null, null, null, null, "09:45"], note: Por El Talar }
-          - [null, null, "09:10", null, "09:30", "?", "10:25"]
-          - [null, null, "09:45", "10:00", "10:00", "?", "11:00"]
-          - [null, null, "10:15", null, "10:30", "?", "11:30"]
-          - [null, null, "10:30", "10:45", "11:00", "?", "12:00"]
-          - [null, null, "11:00", null, "11:15", "?", "12:15"]
+          - { times: [null, null, "09:10", null, "09:30", "09:50", "10:25"], note: Hora en Argüello estimada }
+          - { times: [null, null, "09:45", "10:00", "10:00", "10:25", "11:00"], note: Hora en Argüello estimada }
+          - { times: [null, null, "10:15", null, "10:30", "10:55", "11:30"], note: Hora en Argüello estimada }
+          - { times: [null, null, "10:30", "10:45", "11:00", "11:25", "12:00"], note: Hora en Argüello estimada }
+          - { times: [null, null, "11:00", null, "11:15", "11:40", "12:15"], note: Hora en Argüello estimada }
           - { times: ["11:25", "11:35", null, null, null, null, "12:25"], note: Por El Talar }
-          - [null, null, "11:50", "12:05", "12:05", "?", "13:05"]
-          - [null, null, "12:30", null, "12:45", "?", "13:45"]
-          - [null, null, "13:05", null, "13:35", "?", "14:35"]
+          - { times: [null, null, "11:50", "12:05", "12:05", "12:30", "13:05"], note: Hora en Argüello estimada }
+          - { times: [null, null, "12:30", null, "12:45", "13:10", "13:45"], note: Hora en Argüello estimada }
+          - { times: [null, null, "13:05", null, "13:35", "14:00", "14:35"], note: Hora en Argüello estimada }
           - { times: ["14:25", "14:35", null, null, null, null, "15:25"], note: Por El Talar }
-          - [null, null, "14:15", null, "14:30", "?", "15:30"]
-          - [null, null, "14:30", "14:45", "15:00", "?", "16:00"]
-          - [null, null, "15:30", null, "15:45", "?", "16:45"]
-          - [null, null, "15:50", null, "16:05", "?", "17:05"]
-          - [null, null, "16:20", "16:35", "16:50", "?", "17:50"]
+          - { times: [null, null, "14:15", null, "14:30", "14:55", "15:30"], note: Hora en Argüello estimada }
+          - { times: [null, null, "14:30", "14:45", "15:00", "15:25", "16:00"], note: Hora en Argüello estimada }
+          - { times: [null, null, "15:30", null, "15:45", "16:10", "16:45"], note: Hora en Argüello estimada }
+          - { times: [null, null, "15:50", null, "16:05", "16:30", "17:05"], note: Hora en Argüello estimada }
+          - { times: [null, null, "16:20", "16:35", "16:50", "17:15", "17:50"], note: Hora en Argüello estimada }
           - { times: ["17:30", "17:40", null, null, null, null, "18:30"], note: Por El Talar }
-          - [null, null, "17:30", "17:45", "18:00", "?", "19:00"]
-          - [null, null, "18:00", null, "18:15", "?", "19:15"]
-          - [null, null, "19:50", null, "20:05", "?", "21:05"]
+          - { times: [null, null, "17:30", "17:45", "18:00", "18:25", "19:00"], note: Hora en Argüello estimada }
+          - { times: [null, null, "18:00", null, "18:15", "18:40", "19:15"], note: Hora en Argüello estimada }
+          - { times: [null, null, "19:50", null, "20:05", "20:30", "21:05"], note: Hora en Argüello estimada }
           - { times: ["20:00", "20:10", null, null, null, null, "21:00"], note: Por El Talar }
-          - [null, null, "20:45", null, "21:00", "?", "22:00"]
+          - { times: [null, null, "20:45", null, "21:00", "21:25", "22:00"], note: Hora en Argüello estimada }

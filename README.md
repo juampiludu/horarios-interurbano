@@ -77,27 +77,11 @@ src/                 página (Astro + Preact)
 tests/               tests con datos de prueba y sobre los datos reales
 ```
 
-## Limitaciones conocidas
+## Disclaimers
 
-- **El Talar ≠ Puente Talar.** Puente Talar está sobre la E-57, junto a Muni. Mendiolaza, y cuenta como Mendiolaza.
-  A El Talar (la calle que une la E-57 con la E-53) entran solo algunos:
-  - los E-53 de Intercórdoba que no pasan por Mendiolaza;
-  - los de Intercórdoba "El Talar por Villa Allende";
-  - la línea por Talar de Sarmiento;
-  - los "Talar de Mendiolaza" de FonoBus;
-  - los urbanos.
-
-  Los fines de semana solo entra FonoBus los sábados.
-- Algunas horas son estimadas y lo dice la nota del viaje: CPC Argüello y Mendiolaza en los viajes de Intercórdoba
-  por Villa Allende ⇄ El Talar. En los FonoBus a Saldán, CPC Argüello no tiene hora: se puede bajar ahí, pero no
-  figura como lugar para subirse.
-- La línea Córdoba – Talar – Unquillo de Sarmiento sale de la planilla vecinal de marzo de 2025.
-- Ubicación supuesta de algunas paradas de los urbanos: Barrio Golf, Estación Sol y Calle 3 se toman como
-  Mendiolaza, y Corzuelas como un lugar aparte. El horario "en caso de paro o taller docente" del Urbano Talar
-  (FonoBus) no está cargado.
-- Para Unquillo, Córdoba, etc. se muestra la última parada del lugar antes de salir (por ejemplo, Terminal Unquillo
-  y no Frigorífico).
-- La Voz y Vía País bloquean el acceso automático: sus notas solo se avisan por título (vía Google News) para
-  revisarlas a mano.
-- No hay precios publicados para tramos intermedios (por ejemplo, Villa Allende ⇄ Mendiolaza); se cargan a mano
-  cuando se conocen.
+- Las tarifas pueden estar desactualizadas, dependen de lo que publiquen los medios de comunicación o se hace el calculo con el porcentaje de aumento de tarifa publicado por [ERSeP](https://ersep.cba.gov.ar/transporte-interurbano/).
+- No hay precios publicados para tramos intermedios (por ejemplo, Villa Allende ⇄ Mendiolaza); se cargan a mano cuando se conocen.
+- Las tarifas son aproximadas en algunos tramos.
+- Los horarios son extraidos por un scrapper para el caso de los horarios de Sarmiento (excluyendo El Talar), y de planillas cargadas manualmente por las empresas Intercordoba y FonoBus en sus sitios, por lo que si se actualizan, puede tardar en impactar en este sitio web.
+- Horarios de El Talar son extraidos de una planilla armado por los vecinos correspondiente a marzo 2025, por lo que algunas frecuencias actuales pueden no aparecer en la página ó la página puede mostrar frecuencias ya no existentes.
+- En el caso del urbano de El Talar correspondiente a la empresa FonoBus, los horarios especiales de paro o taller docente no se encuentran disponibles por el momento.

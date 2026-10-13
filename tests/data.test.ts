@@ -75,6 +75,8 @@ describe("real data", () => {
   it("FonoBus Saldán trips (blue) pass CPC Argüello, Talar trips (red) do not", () => {
     expect(trips("cordoba", "cordoba-arguello", "fonobus").length).toBeGreaterThan(0);
     expect(trips("saldan", "cordoba-arguello", "fonobus").length).toBeGreaterThan(0);
+    // Its time is estimated like the E-57 (Córdoba ± 35'), so you can also board there.
+    expect(trips("cordoba-arguello", "saldan", "fonobus").length).toBeGreaterThan(0);
     expect(trips("el-talar", "cordoba-arguello", "fonobus")).toEqual([]);
     expect(trips("cordoba", "saldan", "fonobus").every((d) => d.arrive !== null)).toBe(true);
   });
