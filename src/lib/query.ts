@@ -1,11 +1,13 @@
 import type { Dataset, Fare } from "./dataset";
 import { UNKNOWN, type DayType } from "./schema";
 
+export type Service = "interurban" | "urban";
+
 export interface Departure {
   company: string;
   routeId: string;
   routeName: string;
-  service: "interurban" | "urban";
+  service: Service;
   fromStop: string;
   toStop: string;
   depart: string;
@@ -56,9 +58,13 @@ export function nowInCordoba(now = new Date()) {
   };
 }
 
-/** Places that appear in at least one route, in the order of places.yaml. */
-export function servedPlaces(ds: Dataset) {
-  const used = new Set(ds.routes.flatMap((r) => r.directions.flatMap((d) => d.stops.map((s) => ds.stops[s].place))));
+/** Places that appear in at least one route (of the given service), in the order of places.yaml. */
+export function servedPlaces(ds: Dataset, service?: Service) {
+  const used = new Set(
+    ds.routes
+      .filter((r) => !service || r.service === service)
+      .flatMap((r) => r.directions.flatMap((d) => d.stops.map((s) => ds.stops[s].place))),
+  );
   return ds.places.filter((p) => used.has(p.id));
 }
 

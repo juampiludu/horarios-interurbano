@@ -1,7 +1,7 @@
 // Facts confirmed by the user about the real network. They guard data/ against wrong stops or places.
 import { describe, expect, it } from "vitest";
 import { loadDataset } from "../src/lib/load";
-import { fareFor, findDepartures } from "../src/lib/query";
+import { fareFor, findDepartures, servedPlaces } from "../src/lib/query";
 import { DAY_TYPES } from "../src/lib/schema";
 
 const ds = loadDataset();
@@ -9,6 +9,18 @@ const trips = (from: string, to: string, company?: string) =>
   DAY_TYPES.flatMap((day) => findDepartures(ds, from, to, day)).filter((d) => !company || d.company === company);
 
 describe("real data", () => {
+  it("urban lines (FonoBus and Intercórdoba) serve El Talar and stay out of Córdoba", () => {
+    const urban = servedPlaces(ds, "urban").map((p) => p.id);
+    expect(urban).toEqual(expect.arrayContaining(["el-talar", "mendiolaza", "unquillo"]));
+    expect(urban).not.toContain("cordoba");
+    const companies = new Set(
+      findDepartures(ds, "el-talar", "mendiolaza", "weekday")
+        .filter((d) => d.service === "urban")
+        .map((d) => d.company),
+    );
+    expect(companies).toEqual(new Set(["fonobus", "intercordoba"]));
+  });
+
   it("FonoBus never links Villa Allende with El Talar or Mendiolaza", () => {
     for (const other of ["el-talar", "mendiolaza"]) {
       expect(trips("villa-allende", other, "fonobus")).toEqual([]);

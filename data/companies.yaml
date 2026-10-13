@@ -1,11 +1,12 @@
+# Colors match the community sheet sources/community/el-talar-2025-03.jpg.
 companies:
   - id: intercordoba
     name: Intercórdoba
-    color: "#1f5fbf"
+    color: "#ff0000"
   - id: fonobus
     name: FonoBus
-    color: "#c2410c"
+    color: "#92d050"
   - id: sarmiento
     name: Sarmiento
-    color: "#15803d"
+    color: "#548235"
     website: https://www.gruposarmiento.com.ar/horarios/

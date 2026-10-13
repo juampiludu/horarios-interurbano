@@ -20,6 +20,11 @@ body { margin: 0; background: var(--bg); color: var(--fg); }
 main { max-width: 40rem; margin: 0 auto; padding: 1rem; }
 h1 { font-size: 1.25rem; margin: 0 0 .75rem; }
 
+.service { display: grid; grid-template-columns: 1fr 1fr; margin-bottom: .75rem; }
+.service button { cursor: pointer; border-radius: 0; }
+.service button:first-child { border-radius: 4px 0 0 4px; }
+.service button:last-child { border-radius: 0 4px 4px 0; border-left: 0; }
+.service .on { background: var(--fg); color: var(--bg); border-color: var(--fg); font-weight: 600; }
 .picker { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: .5rem; align-items: end; }
 .picker label { display: grid; gap: .2rem; font-size: .8rem; color: var(--muted); }
 .picker .day { grid-column: 1 / -1; }
@@ -36,7 +41,7 @@ i { display: inline-block; width: .6rem; height: .6rem; border-radius: 50%; marg
 .trips td { border-bottom: 1px solid var(--line); padding: .45rem .4rem; vertical-align: top; }
 .trips .time { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
 .trips .stop { color: var(--muted); font-size: .85rem; }
-.trips small { display: block; }
+.trips small { display: block; font-weight: 400; font-size: .75rem; color: var(--muted); }
 .trips .past { color: var(--muted); }
 .trips .past .time { font-weight: 400; }
 .trips .next { background: var(--accent-bg); }
