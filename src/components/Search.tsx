@@ -100,203 +100,207 @@ export default function Search({ data }: { data: Dataset }) {
   const toPlaceName = places.find((p) => p.id === to)?.name;
 
   return (
-    <>
-      <div class="service" role="radiogroup" aria-label="Servicio">
-        {(Object.keys(SERVICE_LABELS) as Service[]).map((s) => (
-          <button
-            type="button"
-            role="radio"
-            aria-checked={s === service}
-            class={s === service ? "on" : ""}
-            onClick={() => s !== service && switchService(s)}
-          >
-            {SERVICE_LABELS[s]}
-          </button>
-        ))}
-      </div>
-      <form class="picker" onSubmit={(e) => e.preventDefault()}>
-        <label>
-          Desde
-          <select value={from} onChange={(e) => setFrom(e.currentTarget.value)}>
-            <option value="" disabled>
-              Elegí…
-            </option>
-            {places.map((p) => (
-              <option value={p.id}>{p.name}</option>
-            ))}
-          </select>
-        </label>
-        <button
-          type="button"
-          class="swap"
-          title="Invertir"
-          aria-label="Invertir origen y destino"
-          onClick={() => {
-            setFrom(to);
-            setTo(from);
-          }}
-        >
-          ⇄
-        </button>
-        <label>
-          Hasta
-          <select value={to} onChange={(e) => setTo(e.currentTarget.value)}>
-            <option value="" disabled>
-              Elegí…
-            </option>
-            {places.map((p) => (
-              <option value={p.id}>{p.name}</option>
-            ))}
-          </select>
-        </label>
-        <label class="day">
-          Día
-          <select value={day} onChange={(e) => setDay(e.currentTarget.value as DayType)}>
-            {(Object.keys(DAY_LABELS) as DayType[]).map((d) => (
-              <option value={d}>
-                {DAY_LABELS[d]}
-                {d === today ? " (hoy)" : ""}
-              </option>
-            ))}
-          </select>
-        </label>
-      </form>
-
-      <details class="filters">
-        <summary>Filtros{activeFilters > 0 && ` (${activeFilters})`}</summary>
-        {tripCompanies.length > 1 && (
-          <fieldset>
-            <legend>Empresas</legend>
-            {tripCompanies.map((c) => (
-              <label>
-                <input
-                  type="checkbox"
-                  checked={!hiddenCompanies.includes(c)}
-                  onChange={(e) =>
-                    setHiddenCompanies(
-                      e.currentTarget.checked ? hiddenCompanies.filter((h) => h !== c) : [...hiddenCompanies, c],
-                    )
-                  }
-                />
-                <i style={{ background: data.companies[c].color }} />
-                {data.companies[c].name}
-              </label>
-            ))}
-          </fieldset>
-        )}
-        <div class="times">
-          <label>
-            Salir desde
-            <input type="time" value={departAfter} onInput={(e) => setDepartAfter(e.currentTarget.value)} />
-          </label>
-          <label>
-            Llegar antes de
-            <input type="time" value={arriveBefore} onInput={(e) => setArriveBefore(e.currentTarget.value)} />
-          </label>
+    <div class="layout">
+      <div class="controls">
+        <div class="service" role="radiogroup" aria-label="Servicio">
+          {(Object.keys(SERVICE_LABELS) as Service[]).map((s) => (
+            <button
+              type="button"
+              role="radio"
+              aria-checked={s === service}
+              class={s === service ? "on" : ""}
+              onClick={() => s !== service && switchService(s)}
+            >
+              {SERVICE_LABELS[s]}
+            </button>
+          ))}
         </div>
-        {activeFilters > 0 && (
+        <form class="picker" onSubmit={(e) => e.preventDefault()}>
+          <label>
+            Desde
+            <select value={from} onChange={(e) => setFrom(e.currentTarget.value)}>
+              <option value="" disabled>
+                Elegí…
+              </option>
+              {places.map((p) => (
+                <option value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </label>
           <button
             type="button"
+            class="swap"
+            title="Invertir"
+            aria-label="Invertir origen y destino"
             onClick={() => {
-              setHiddenCompanies([]);
-              setDepartAfter("");
-              setArriveBefore("");
+              setFrom(to);
+              setTo(from);
             }}
           >
-            Limpiar filtros
+            ⇄
           </button>
-        )}
-      </details>
+          <label>
+            Hasta
+            <select value={to} onChange={(e) => setTo(e.currentTarget.value)}>
+              <option value="" disabled>
+                Elegí…
+              </option>
+              {places.map((p) => (
+                <option value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </label>
+          <label class="day">
+            Día
+            <select value={day} onChange={(e) => setDay(e.currentTarget.value as DayType)}>
+              {(Object.keys(DAY_LABELS) as DayType[]).map((d) => (
+                <option value={d}>
+                  {DAY_LABELS[d]}
+                  {d === today ? " (hoy)" : ""}
+                </option>
+              ))}
+            </select>
+          </label>
+        </form>
 
-      {service === "urban" && shown.length > 0 && <p class="fares">Tarifa urbana: sin cargar</p>}
-      {companies.length > 0 && (
-        <p class="fares">
-          {companies.map((c) => {
-            const fare = fareFor(data, c, from, to, now.date);
-            return (
-              <span>
-                <i style={{ background: data.companies[c].color }} />
-                {data.companies[c].name}:{" "}
-                {fare ? (
-                  <span
-                    title={
-                      fare.estimated
-                        ? `Estimada a partir de ${money.format(fare.base.price)} (${fare.base.validFrom.split("-").reverse().join("/")}) más los aumentos del ERSeP`
-                        : undefined
+        <details class="filters">
+          <summary>Filtros{activeFilters > 0 && ` (${activeFilters})`}</summary>
+          {tripCompanies.length > 1 && (
+            <fieldset>
+              <legend>Empresas</legend>
+              {tripCompanies.map((c) => (
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={!hiddenCompanies.includes(c)}
+                    onChange={(e) =>
+                      setHiddenCompanies(
+                        e.currentTarget.checked ? hiddenCompanies.filter((h) => h !== c) : [...hiddenCompanies, c],
+                      )
                     }
-                  >
-                    {fare.estimated ? `≈ ${money.format(fare.price)} (estimada)` : money.format(fare.price)}
-                  </span>
-                ) : (
-                  "tarifa sin cargar"
-                )}
-              </span>
-            );
-          })}
-        </p>
-      )}
+                  />
+                  <i style={{ background: data.companies[c].color }} />
+                  {data.companies[c].name}
+                </label>
+              ))}
+            </fieldset>
+          )}
+          <div class="times">
+            <label>
+              Salir desde
+              <input type="time" value={departAfter} onInput={(e) => setDepartAfter(e.currentTarget.value)} />
+            </label>
+            <label>
+              Llegar antes de
+              <input type="time" value={arriveBefore} onInput={(e) => setArriveBefore(e.currentTarget.value)} />
+            </label>
+          </div>
+          {activeFilters > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                setHiddenCompanies([]);
+                setDepartAfter("");
+                setArriveBefore("");
+              }}
+            >
+              Limpiar filtros
+            </button>
+          )}
+        </details>
 
-      {isToday && from && to && from !== to && deps.length > 0 && (
-        <label class="hide-past">
-          <input type="checkbox" checked={hidePast} onChange={(e) => toggleHidePast(e.currentTarget.checked)} />
-          Ocultar los que ya pasaron
-        </label>
-      )}
+        {service === "urban" && shown.length > 0 && <p class="fares">Tarifa urbana: sin cargar</p>}
+        {companies.length > 0 && (
+          <p class="fares">
+            {companies.map((c) => {
+              const fare = fareFor(data, c, from, to, now.date);
+              return (
+                <span>
+                  <i style={{ background: data.companies[c].color }} />
+                  {data.companies[c].name}:{" "}
+                  {fare ? (
+                    <span
+                      title={
+                        fare.estimated
+                          ? `Estimada a partir de ${money.format(fare.base.price)} (${fare.base.validFrom.split("-").reverse().join("/")}) más los aumentos del ERSeP`
+                          : undefined
+                      }
+                    >
+                      {fare.estimated ? `≈ ${money.format(fare.price)} (estimada)` : money.format(fare.price)}
+                    </span>
+                  ) : (
+                    "tarifa sin cargar"
+                  )}
+                </span>
+              );
+            })}
+          </p>
+        )}
 
-      {!from || !to ? (
-        <p class="empty">Elegí desde dónde y hasta dónde viajás.</p>
-      ) : from === to ? (
-        <p class="empty">Elegí un origen y un destino distintos.</p>
-      ) : allDeps.length > 0 && deps.length === 0 ? (
-        <p class="empty">Ningún viaje coincide con los filtros.</p>
-      ) : deps.length === 0 ? (
-        <p class="empty">No hay horarios cargados para este tramo en {DAY_LABELS[day].toLowerCase()}.</p>
-      ) : shown.length === 0 ? (
-        <p class="empty">Ya no quedan viajes hoy para este tramo.</p>
-      ) : (
-        <table class="trips">
-          <thead>
-            <tr>
-              <th>Sale</th>
-              <th>Llega</th>
-              <th>Empresa</th>
-              <th>Desde</th>
-            </tr>
-          </thead>
-          <tbody>
-            {shown.map((d, i) => (
-              <tr
-                ref={i === nextIndex ? nextRow : undefined}
-                class={i === nextIndex ? "next" : isToday && (nextIndex === -1 || i < nextIndex) ? "past" : ""}
-              >
-                <td class="time">{displayTime(d.depart)}</td>
-                <td class="time">
-                  {d.arrive ? displayTime(d.arrive) : "—"}
-                  {!toPlaceName?.includes(data.stops[d.toStop].name) && <small>a {data.stops[d.toStop].name}</small>}
-                </td>
-                <td>
-                  <i style={{ background: data.companies[d.company].color }} />
-                  {data.companies[d.company].name}
-                </td>
-                <td class="stop">
-                  {data.stops[d.fromStop].name}
-                  {d.note && <small>{d.note}</small>}
-                </td>
+        {isToday && from && to && from !== to && deps.length > 0 && (
+          <label class="hide-past">
+            <input type="checkbox" checked={hidePast} onChange={(e) => toggleHidePast(e.currentTarget.checked)} />
+            Ocultar los que ya pasaron
+          </label>
+        )}
+      </div>
+
+      <div class="results">
+        {!from || !to ? (
+          <p class="empty">Elegí desde dónde y hasta dónde viajás.</p>
+        ) : from === to ? (
+          <p class="empty">Elegí un origen y un destino distintos.</p>
+        ) : allDeps.length > 0 && deps.length === 0 ? (
+          <p class="empty">Ningún viaje coincide con los filtros.</p>
+        ) : deps.length === 0 ? (
+          <p class="empty">No hay horarios cargados para este tramo en {DAY_LABELS[day].toLowerCase()}.</p>
+        ) : shown.length === 0 ? (
+          <p class="empty">Ya no quedan viajes hoy para este tramo.</p>
+        ) : (
+          <table class="trips">
+            <thead>
+              <tr>
+                <th>Sale</th>
+                <th>Llega</th>
+                <th>Empresa</th>
+                <th>Desde</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {shown.map((d, i) => (
+                <tr
+                  ref={i === nextIndex ? nextRow : undefined}
+                  class={i === nextIndex ? "next" : isToday && (nextIndex === -1 || i < nextIndex) ? "past" : ""}
+                >
+                  <td class="time">{displayTime(d.depart)}</td>
+                  <td class="time">
+                    {d.arrive ? displayTime(d.arrive) : "—"}
+                    {!toPlaceName?.includes(data.stops[d.toStop].name) && <small>a {data.stops[d.toStop].name}</small>}
+                  </td>
+                  <td class="company">
+                    <i style={{ background: data.companies[d.company].color }} />
+                    {data.companies[d.company].name}
+                  </td>
+                  <td class="stop">
+                    {data.stops[d.fromStop].name}
+                    {d.note && <small>{d.note}</small>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
 
-      {usedRoutes.length > 0 && (
-        <footer>
-          {usedRoutes.map((r) => (
-            <div>
-              {data.companies[r.company].name} · {r.name}: vigente desde {r.validFrom.split("-").reverse().join("/")}
-            </div>
-          ))}
-        </footer>
-      )}
-    </>
+        {usedRoutes.length > 0 && (
+          <footer>
+            {usedRoutes.map((r) => (
+              <div>
+                {data.companies[r.company].name} · {r.name}: vigente desde {r.validFrom.split("-").reverse().join("/")}
+              </div>
+            ))}
+          </footer>
+        )}
+      </div>
+    </div>
   );
 }
